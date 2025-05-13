@@ -11,12 +11,10 @@ const formStore = useFormStore();
 const form = computed(() => formStore.getFormById(props.id));
 const formResponses = computed(() => formStore.getFormResponses(props.id));
 
-// Helper function to find a question by its ID
 const findQuestion = (questionId: string): Question | undefined => {
   return form.value?.questions.find(q => q.id === questionId);
 };
 
-// Helper function to get the display value for a response
 const getResponseDisplayValue = (response: QuestionResponse): string => {
   if (response.type === 'radio') {
     const question = findQuestion(response.questionId);
@@ -32,7 +30,6 @@ const getResponseDisplayValue = (response: QuestionResponse): string => {
   }
 };
 
-// Format date helper
 const formatDate = (date: Date): string => {
   return new Date(date).toLocaleString();
 };
@@ -78,7 +75,7 @@ const formatDate = (date: Date): string => {
               </th>
             </tr>
           </thead>
-          <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200  ">
+          <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700  ">
             <tr v-for="response in formResponses" :key="response.id">
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ formatDate(response.submittedAt) }}

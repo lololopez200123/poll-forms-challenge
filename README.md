@@ -52,11 +52,29 @@ The application uses Pinia for state management, with two main stores:
 
 ### Component Structure
 
-The application is structured with reusability in mind:
+The application is structured with modularity and reusability in mind:
 
+- **Common Components**: Reusable UI elements like buttons, inputs, and cards
 - **UI Components**: Handle the overall layout and navigation
 - **Poll Components**: Specific to poll functionality
 - **Form Components**: Handle form creation, submission, and results
+
+### Composables
+
+The application uses Vue 3 Composition API with several composables for code reuse:
+
+- **useTheme**: Handles dark/light theme toggling
+- **useFormQuestions**: Handles form question management
+- **useValidation**: Provides form validation functionality
+- **useAlert**: Manages application alerts and notifications
+
+### Type Organization
+
+Types are organized by domain for better maintainability:
+
+- **poll.ts**: Poll-related types
+- **form.ts**: Form definition types
+- **response.ts**: Form response types
 
 ### Routing
 

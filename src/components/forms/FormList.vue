@@ -2,8 +2,7 @@
 import { computed } from 'vue';
 import { useFormStore } from '../../stores/formStore';
 
-// Define props
-const props = defineProps({
+defineProps({
   compact: {
     type: Boolean,
     default: false
@@ -19,7 +18,6 @@ const deleteForm = (formId: string) => {
   }
 };
 
-// Format date helper
 const formatDate = (date: Date): string => {
   return new Date(date).toLocaleDateString();
 };
@@ -83,10 +81,8 @@ const formatDate = (date: Date): string => {
           
           <router-link
             :to="`/forms/${form.id}/results`"
-             class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md 
-                  text-primary-700 bg-primary-50 hover:bg-primary-100 
-                  dark:text-primary-200 dark:bg-gray-700 dark:hover:bg-gray-600
-                  transition-colors duration-200"
+             class="btn btn-secondary inline-flex items-center text-sm font-medium"
+
           >
             View Responses
           </router-link>

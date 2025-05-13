@@ -1,155 +1,75 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useFormStore } from '../../stores/formStore';
-import { v4 as uuidv4 } from 'uuid';
-import type { Question, QuestionType } from '../../types';
+import { useFormQuestions } from '../../composables/useFormQuestions';
+import { useValidation } from '../../composables/useValidation';
+import { useAlert } from '../../composables/useAlert';
+import type { QuestionType } from '../../types';
+
+// Import common components
+import AppCard from '../common/AppCard.vue';
+import AppInput from '../common/AppInput.vue';
+import AppSelect from '../common/AppSelect.vue';
+import AppButton from '../common/AppButton.vue';
+import AppCheckbox from '../common/AppCheckbox.vue';
+import AppAlert from '../common/AppAlert.vue';
 
 const formStore = useFormStore();
+const { questions, initializeQuestions, addQuestion, removeQuestion, 
+        setQuestionType, addOption, removeOption, validateQuestions } = useFormQuestions();
+const validation = useValidation();
+const { showAlert, message: alertMessage, type: alertType, isVisible: isAlertVisible, dismissAlert } = useAlert();
 
 const title = ref('');
-const questions = ref<Question[]>([]);
-const error = ref('');
-const successMessage = ref('');
 
-// Add a default first question
-const addDefaultQuestion = () => {
-  questions.value.push({
-    id: uuidv4(),
-    text: '',
-    type: 'short-answer',
-    required: false,
-    placeholder: undefined
-  });
-};
-
-// Initialize with one question when component is mounted
 onMounted(() => {
-  addDefaultQuestion();
+  initializeQuestions();
 });
-const addQuestion = () => {
-  questions.value.push({
-    id: uuidv4(),
-    text: '',
-    type: 'short-answer',
-    required: false,
-    placeholder: undefined
-  });
-};
-
-const removeQuestion = (index: number) => {
-  if (questions.value.length > 1) {
-    questions.value.splice(index, 1);
-  }
-};
-
-const addOption = (questionIndex: number) => {
-  const question = questions.value[questionIndex];
-  if (question.type === 'radio') {
-    if (!question.options) {
-      question.options = [];
-    }
-    question.options.push({ id: uuidv4(), text: '' });
-  }
-};
-
-const removeOption = (questionIndex: number, optionIndex: number) => {
-  const question = questions.value[questionIndex];
-  if (question.type === 'radio' && question.options && question.options.length > 1) {
-    question.options.splice(optionIndex, 1);
-  }
-};
-
-const setQuestionType = (questionIndex: number, type: QuestionType) => {
-  const question = questions.value[questionIndex];
-  
-  // Create a new question object with the correct type
-  if (type === 'radio') {
-    questions.value[questionIndex] = {
-      ...question,
-      type,
-      options: [
-        { id: uuidv4(), text: '' },
-        { id: uuidv4(), text: '' }
-      ]
-    };
-  } else {
-    // For non-radio types, remove any options
-    const { options, ...rest } = question as any;
-    questions.value[questionIndex] = {
-      ...rest,
-      type,
-      placeholder: question.type === 'radio' ? undefined : question.placeholder
-    };
-  }
-};
 
 const createForm = () => {
-  // Validation
-  error.value = '';
-  
-  if (!title.value.trim()) {
-    error.value = 'Please enter a form title';
+  if (!validation.validateField('title', title.value, [
+    validation.rules.required('Please enter a form title')
+  ])) {
+    showAlert(validation.getFieldError('title'), 'error');
     return;
   }
   
-  // Check that all questions have text
-  for (const question of questions.value) {
-    if (!question.text.trim()) {
-      error.value = 'All questions must have text';
-      return;
-    }
-    
-    // Check that radio questions have at least 2 options with text
-    if (question.type === 'radio' && question.options) {
-      const validOptions = question.options.filter(opt => opt.text.trim());
-      if (validOptions.length < 2) {
-        error.value = 'Radio questions must have at least 2 options';
-        return;
-      }
-    }
+  const questionError = validateQuestions();
+  if (questionError) {
+    showAlert(questionError, 'error');
+    return;
   }
   
-  // Create form
   try {
     formStore.createForm(title.value, questions.value);
-    successMessage.value = 'Form created successfully!';
+    showAlert('Form created successfully!', 'success', { autoDismiss: true });
     
-    // Reset form
     title.value = '';
-    questions.value = [];
-    addDefaultQuestion();
-    
-    // Clear success message after a delay
-    setTimeout(() => {
-      successMessage.value = '';
-    }, 3000);
+    initializeQuestions();
   } catch (e) {
-    error.value = 'Failed to create form';
+    showAlert('Failed to create form', 'error');
   }
 };
 </script>
 
 <template>
-  <div class="bg-white dark:bg-dark shadow rounded-lg p-6">
-    <h3 class="text-lg font-medium dark:text-white text-gray-900 mb-4">Create a New Form</h3>
-    
-    <div v-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-      {{ error }}
-    </div>
-    
-    <div v-if="successMessage" class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
-      {{ successMessage }}
-    </div>
+  <app-card title="Create a New Form">
+    <app-alert
+      v-if="isAlertVisible"
+      :type="alertType"
+      :message="alertMessage"
+      :dismissible="true"
+      @dismiss="dismissAlert"
+    />
     
     <form @submit.prevent="createForm">
       <div class="mb-6">
-        <label for="title" class="input-label">Form Title</label>
-        <input
+        <app-input
           id="title"
           v-model="title"
-          type="text"
-          class="block w-full rounded-lg dark:bg-gray-900 border-gray-300 shadow-sm focus:border-secondary focus:ring-secondary"
+          label="Form Title"
           placeholder="Enter form title"
+          required
         />
       </div>
       
@@ -173,66 +93,55 @@ const createForm = () => {
           </div>
           
           <div class="mb-4">
-            <label :for="`question-${questionIndex}`" class="input-label">Question Text</label>
-            <input
+            <app-input
               :id="`question-${questionIndex}`"
               v-model="question.text"
-              type="text"
-              class="block w-full rounded-lg border-gray-300 dark:border-gray-700 shadow-sm dark:bg-gray-800 dark:text-white focus:border-secondary-500 focus:ring-secondary-500 transition-colors duration-200"
+              label="Question Text"
               placeholder="Enter question text"
+              required
             />
           </div>
           
           <div class="mb-4">
-            <label :for="`question-type-${questionIndex}`" class="input-label">Question Type</label>
-            <select
+            <app-select
               :id="`question-type-${questionIndex}`"
               :value="question.type"
-              @change="(e: Event) => setQuestionType(questionIndex, (e.target as HTMLSelectElement).value as QuestionType)"
-              class="block w-full rounded-lg border-gray-300 dark:border-gray-700 shadow-sm dark:bg-gray-800 dark:text-white focus:border-secondary-500 focus:ring-secondary-500 transition-colors duration-200"
-            >
-              <option value="short-answer">Short Answer</option>
-              <option value="long-answer">Long Answer</option>
-              <option value="number">Number</option>
-              <option value="radio">Radio (Single Choice)</option>
-            </select>
+              @update:modelValue="(value) => setQuestionType(questionIndex, value as QuestionType)"
+              :options="[
+                { id: 'short-answer', text: 'Short Answer' },
+                { id: 'long-answer', text: 'Long Answer' },
+                { id: 'number', text: 'Number' },
+                { id: 'radio', text: 'Radio (Single Choice)' }
+              ]"
+              label="Question Type"
+            />
           </div>
           
           <div class="mb-4">
-            <div class="flex items-center">
-              <input 
-                :id="`required-${questionIndex}`" 
-                v-model="question.required" 
-                type="checkbox" 
-                class="h-4 w-4 border-gray-300 dark:border-gray-600 rounded text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700"
-              />
-              <label :for="`required-${questionIndex}`" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                This question is required
-              </label>
-            </div>
+            <app-checkbox
+              :id="`required-${questionIndex}`"
+              v-model="question.required"
+              label="This question is required"
+            />
           </div>
           
           <!-- Placeholder field for text and number inputs -->
           <div v-if="question.type !== 'radio'" class="mb-4">
-            <label :for="`placeholder-${questionIndex}`" class="input-label">Placeholder (Optional)</label>
-            <input
+            <app-input
               :id="`placeholder-${questionIndex}`"
               v-model="question.placeholder"
-              type="text"
-              class="block w-full rounded-lg border-gray-300 dark:border-gray-700 shadow-sm dark:bg-gray-800 dark:text-white focus:border-secondary-500 focus:ring-secondary-500 transition-colors duration-200"
+              label="Placeholder (Optional)"
               placeholder="Enter placeholder text"
             />
           </div>
           
           <!-- Radio options -->
           <div v-if="question.type === 'radio' && question.options" class="mb-4">
-            <label class="input-label">Options</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Options</label>
             
             <div v-for="(option, optionIndex) in question.options" :key="option.id" class="flex mb-3 items-center">
-              <input
+              <app-input
                 v-model="option.text"
-                type="text"
-                class="block w-full rounded-lg border-gray-300 dark:border-gray-700 shadow-sm dark:bg-gray-800 dark:text-white focus:border-secondary-500 focus:ring-secondary-500 transition-colors duration-200"
                 :placeholder="`Option ${optionIndex + 1}`"
               />
               <button
@@ -248,39 +157,42 @@ const createForm = () => {
               </button>
             </div>
             
-            <button
+            <app-button
               type="button"
               @click="addOption(questionIndex)"
-              class="mt-1 inline-flex items-center px-3 py-1.5 border border-gray-200 dark:border-gray-700 text-xs font-medium rounded-md text-secondary-700 dark:text-secondary-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              variant="outline"
+              size="sm"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
               </svg>
               Add Option
-            </button>
+            </app-button>
           </div>
         </div>
         
-        <button
+        <app-button
           type="button"
           @click="addQuestion"
-          class="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 text-sm font-medium rounded-md text-secondary-700 dark:text-secondary-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          variant="outline"
+          size="md"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
           </svg>
           Add Question
-        </button>
+        </app-button>
       </div>
       
       <div class="mt-6">
-        <button
+        <app-button
           type="submit"
-          class="btn btn-primary px-5 py-2.5 bg-secondary-600 hover:bg-secondary-700 transition-colors"
+          variant="secondary"
+          size="lg"
         >
           Create Form
-        </button>
+        </app-button>
       </div>
     </form>
-  </div>
+  </app-card>
 </template>

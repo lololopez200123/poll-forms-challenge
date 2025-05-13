@@ -13,7 +13,6 @@ const responses = ref<Record<string, string | number | null>>({});
 const error = ref('');
 const success = ref(false);
 
-// Initialize responses as empty for all questions
 if (form.value) {
   form.value.questions.forEach(question => {
     responses.value[question.id] = null;
@@ -32,13 +31,11 @@ const isRequiredMissing = (questionId: string, question: Question): boolean => {
 const submitForm = () => {
   error.value = '';
   
-  // Check if form exists
   if (!form.value) {
     error.value = 'Form not found';
     return;
   }
   
-  // Validate required fields
   const missingRequired = form.value.questions.some(question => 
     isRequiredMissing(question.id, question)
   );
@@ -48,7 +45,6 @@ const submitForm = () => {
     return;
   }
   
-  // Format responses
   const formattedResponses: QuestionResponse[] = [];
   
   for (const question of form.value.questions) {
@@ -86,7 +82,6 @@ const submitForm = () => {
     formStore.submitFormResponse(props.id, formattedResponses);
     success.value = true;
     
-    // Reset form
     Object.keys(responses.value).forEach(key => {
       responses.value[key] = null;
     });

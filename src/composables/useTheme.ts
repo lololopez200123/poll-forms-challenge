@@ -22,7 +22,6 @@ export function useTheme() {
   function watchSystemTheme() {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-    // Define callback for changes
     const handleChange = (e: MediaQueryListEvent | MediaQueryList) => {
       const userSetting = localStorage.getItem('darkMode');
       // Only apply system preference if user hasn't manually chosen
@@ -32,20 +31,16 @@ export function useTheme() {
       }
     };
 
-    // Initial check
     handleChange(mediaQuery);
 
-    // Add listener for changes
     mediaQuery.addEventListener('change', handleChange);
 
-    // Clean up
     return () => {
       mediaQuery.removeEventListener('change', handleChange);
     };
   }
 
   onMounted(() => {
-    // Check user preference first
     const userSetting = localStorage.getItem('darkMode');
     if (userSetting !== null) {
       isDarkMode.value = userSetting === 'true';
@@ -58,7 +53,6 @@ export function useTheme() {
       applyTheme(isDarkMode.value);
     }
 
-    // Watch for system changes
     watchSystemTheme();
   });
 

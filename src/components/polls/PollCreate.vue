@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { usePollStore } from '../../stores/pollStore';
+import { useValidation } from '../../composables/useValidation';
+import { useAlert } from '../../composables/useAlert';
+import AppInput from '../common/AppInput.vue';
+import AppButton from '../common/AppButton.vue';
+import AppAlert from '../common/AppAlert.vue';
+import AppCard from '../common/AppCard.vue';
 
 const pollStore = usePollStore();
+const validation = useValidation();
+const { showAlert, message: alertMessage, type: alertType, isVisible: isAlertVisible, dismissAlert } = useAlert();
 
 const question = ref('');
 const options = ref<string[]>(['', '']);
-const error = ref('');
-const successMessage = ref('');
 
 const addOption = () => {
   options.value.push('');
@@ -20,73 +26,74 @@ const removeOption = (index: number) => {
 };
 
 const createPoll = () => {
-  // Validation
-  error.value = '';
+  const isValid = validation.validateFields(
+    { question: question.value, options: options.value },
+    {
+      question: [validation.rules.required('Please enter a question')],
+      options: [
+        validation.rules.custom(
+          (opts: unknown) => {
+            if (Array.isArray(opts)) {
+              const stringArray = opts as string[];
+              return stringArray.filter(opt => opt.trim()).length >= 2;
+            }
+            return false;
+          },
+          'Please provide at least 2 options'
+        )
+      ]
+    }
+  );
   
-  if (!question.value.trim()) {
-    error.value = 'Please enter a question';
+  if (!isValid) {
+    showAlert(Object.values(validation.errors.value)[0], 'error');
     return;
   }
   
-  // Filter out empty options and check if we have at least 2
   const validOptions = options.value.filter(opt => opt.trim());
-  if (validOptions.length < 2) {
-    error.value = 'Please provide at least 2 options';
-    return;
-  }
   
-  // Create poll
   try {
-    const pollId = pollStore.createPoll(question.value, validOptions);
-    successMessage.value = 'Poll created successfully!';
+    pollStore.createPoll(question.value, validOptions);
+    showAlert('Poll created successfully!', 'success', { autoDismiss: true });
     
     // Reset form
     question.value = '';
     options.value = ['', ''];
-    
-    // Clear success message after a delay
-    setTimeout(() => {
-      successMessage.value = '';
-    }, 3000);
   } catch (e) {
-    error.value = 'Failed to create poll';
+    showAlert('Failed to create poll', 'error');
   }
 };
 </script>
 
 <template>
-  <div class="card">
-    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Create a New Poll</h3>
-    
-    <div v-if="error" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-6 py-4 rounded-lg mb-6">
-      {{ error }}
-    </div>
-    
-    <div v-if="successMessage" class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-6 py-4 rounded-lg mb-6">
-      {{ successMessage }}
-    </div>
+  <AppCard title="Create a New Poll">
+    <AppAlert
+      v-if="isAlertVisible"
+      :type="alertType"
+      :message="alertMessage"
+      :dismissible="true"
+      @dismiss="dismissAlert"
+    />
     
     <form @submit.prevent="createPoll">
       <div class="mb-6">
-        <label for="question" class="input-label mb-2">Question</label>
-        <input
+        <AppInput
           id="question"
           v-model="question"
-          type="text"
-          class="block w-full rounded-lg border-gray-300  dark:border-gray-700 shadow-sm dark:bg-gray-800 dark:text-white focus:border-primary-500 focus:ring-primary px-4 py-3 transition-colors duration-200"
+          label="Question"
           placeholder="Enter your poll question"
+          required
         />
       </div>
       
       <div class="mb-6">
-        <label class="input-label mb-3">Options</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Options</label>
         
         <div v-for="(_, index) in options" :key="index" class="flex mb-4 items-center">
-          <input
+          <AppInput
             v-model="options[index]"
-            type="text"
-            class="block w-full rounded-lg border-gray-300  dark:border-gray-700 shadow-sm dark:bg-gray-800 dark:text-white focus:border-primary-500 focus:ring-primary-500 px-4 py-3 transition-colors duration-200"
             :placeholder="`Option ${index + 1}`"
+            :id="`option-${index}`"
           />
           <button
             type="button"
@@ -101,26 +108,28 @@ const createPoll = () => {
           </button>
         </div>
         
-        <button
+        <app-button
           type="button"
           @click="addOption"
-          class="mt-2 inline-flex items-center px-4 py-2.5 border border-gray-200 dark:border-gray-700 text-sm font-medium rounded-md text-primary-700 dark:text-primary-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          variant="outline"
+          size="md"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
           </svg>
           Add Option
-        </button>
+        </app-button>
       </div>
       
       <div class="mt-8">
-        <button
+        <app-button
           type="submit"
-          class="btn btn-primary px-6 py-3 bg-primary-600 hover:bg-primary-700 transition-colors rounded-lg text-white font-medium"
+          variant="primary"
+          size="lg"
         >
           Create Poll
-        </button>
+        </app-button>
       </div>
     </form>
-  </div>
+  </AppCard>
 </template>

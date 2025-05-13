@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { usePollStore } from '../../stores/pollStore';
 
 const props = defineProps<{
@@ -93,7 +93,7 @@ const submitVote = () => {
         <div class="mt-6">
           <button
             type="submit"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-indigo-500 transition-colors duration-200"
+            class="btn btn-primary text-sm inline-flex "
           >
             Submit Vote
           </button>
