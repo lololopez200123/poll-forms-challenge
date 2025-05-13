@@ -89,11 +89,3 @@ Vue Router is used to navigate between different views:
 ### TypeScript Integration
 
 TypeScript is used throughout the application to provide type safety, especially for the complex data structures used in forms.
-
-## Future Improvements
-
-- User authentication
-- Persistent storage (currently data is lost on page reload)
-- More question types (e.g., checkboxes for multiple choice)
-- Form templates
-- Data export options for form responses
