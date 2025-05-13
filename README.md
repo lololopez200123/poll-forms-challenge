@@ -55,7 +55,7 @@ The application uses Pinia for state management, with two main stores:
 The application is structured with modularity and reusability in mind:
 
 - **Common Components**: Reusable UI elements like buttons, inputs, and cards
-- **UI Components**: Handle the overall layout and navigation
+- **Page Components**: Handle the overall layout and navigation
 - **Poll Components**: Specific to poll functionality
 - **Form Components**: Handle form creation, submission, and results
 
