@@ -1,16 +1,24 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { usePollStore } from '../../stores/pollStore';
 
 const props = defineProps<{
   id: string;
 }>();
 
+const route = useRoute();
 const pollStore = usePollStore();
 const poll = computed(() => pollStore.getPollById(props.id));
 const selectedOptionId = ref<string | null>(null);
 const hasVoted = ref(false);
 const error = ref('');
+
+onMounted(() => {
+  if (route.query.view === 'results') {
+    hasVoted.value = true;
+  }
+});
 
 const submitVote = () => {
   if (!selectedOptionId.value) {
@@ -64,7 +72,7 @@ const submitVote = () => {
           @click="$router.push('/')"
           class="btn btn-primary mt-2"
           >
-          Continue
+          Back to Home
         </button>
       </div>
     </div>

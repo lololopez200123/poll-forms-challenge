@@ -2,7 +2,6 @@
 import { computed } from 'vue';
 import { usePollStore } from '../../stores/pollStore';
 
-// Define props
 defineProps({
   compact: {
     type: Boolean,
@@ -76,12 +75,30 @@ const formatDate = (date: Date): string => {
         </template>
         
         <div class="mt-4">
-          <router-link
-            :to="`/polls/${poll.id}`"
-            class="btn btn-secondary inline-flex items-center text-sm font-medium"
-          >
-            View & Vote
-          </router-link>
+          <template v-if="compact && poll.options.length > 2">
+            <div class="flex space-x-2">
+              <router-link
+                :to="`/polls/${poll.id}?view=results`"
+                class="btn btn-secondary inline-flex items-center text-sm font-medium px-3 py-1.5"
+              >
+                View
+              </router-link>
+              <router-link
+                :to="`/polls/${poll.id}`"
+                class="btn btn-primary inline-flex items-center text-sm font-medium px-3 py-1.5"
+              >
+                Vote
+              </router-link>
+            </div>
+          </template>
+          <template v-else>
+            <router-link
+              :to="`/polls/${poll.id}`"
+              class="btn btn-secondary inline-flex items-center text-sm font-medium"
+            >
+              View & Vote
+            </router-link>
+          </template>
         </div>
       </div>
     </div>
