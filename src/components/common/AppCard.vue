@@ -17,7 +17,7 @@ const props = defineProps({
 });
 
 const cardClasses = computed(() => 
-  `app-card bg-white dark:bg-dark backdrop-blur-sm rounded-lg relative overflow-hidden ${props.noPadding ? '' : 'p-6'}`
+  `app-card bg-white dark:bg-dark backdrop-blur-sm rounded-lg relative overflow-hidden animation-slide-up ${props.noPadding ? '' : 'p-6'}`
 );
 </script>
 
@@ -35,10 +35,26 @@ const cardClasses = computed(() =>
 </template>
 
 <style scoped>
+
 .app-card {
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 8px 32px 0 var(--bg-primary);
   border: 1px solid rgba(255, 255, 255, 0.18);
+  animation: slide-up 0.5s ease-in-out;
+}
+
+animation-slide-up {
+  animation: slide-up 0.3s ease-in-out;
+}
+@keyframes slide-up {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .dark .app-card {

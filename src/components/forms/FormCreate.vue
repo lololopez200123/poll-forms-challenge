@@ -75,7 +75,7 @@ const createForm = () => {
       
       <div class="mb-6">
         <h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-4">Questions</h4>
-        
+        <TransitionGroup name="fade" mode="out-in">
         <div v-for="(question, questionIndex) in questions" :key="question.id" class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-md mb-4">
           <div class="flex justify-between items-start mb-2">
             <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300">Question {{ questionIndex + 1 }}</h5>
@@ -170,6 +170,7 @@ const createForm = () => {
             </app-button>
           </div>
         </div>
+        </TransitionGroup>
         
         <app-button
           type="button"
