@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/iso-logo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bindin Polls & Forms</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description"
+    content="Create and manage polls and forms easily with Bindin - the intuitive polling and form creation platform." />
+  <meta name="keywords" content="polls, forms, surveys, online forms, questionnaires, feedback" />
+  <meta name="author" content="Bindin" />
+
+  <script>
+    (function () {
+      const savedDarkMode = localStorage.getItem('darkMode');
+      if (savedDarkMode === 'true' ||
+        (savedDarkMode === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
