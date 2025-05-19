@@ -1,4 +1,12 @@
-# Poll and Form Builder
+![Preview](./docs/formsandpolls.jpg)
+
+# FORMS AND POLLS APP
+
+![Vue 3](https://img.shields.io/badge/Vue-3.5-brightgreen.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)
+![Pinia](https://img.shields.io/badge/Pinia-3.0-orange.svg)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.4-blue.svg)
+![Vue Router](https://img.shields.io/badge/Vue%20Router-4.5-red.svg)
 
 A Vue 3 application that allows users to create and respond to Polls and Forms.
 
