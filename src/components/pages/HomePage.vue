@@ -18,18 +18,18 @@ const goToCreateForm = () => {
 
 <template>
   <div>
-    <header class="mb-10">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-        Dashboard
+    <header class="mb-10 bg-app">
+      <h1 class="text-2xl font-bold text-gray-300 dark:text-white mb-2">
+        Admin Dashboard
       </h1>
-      <p class="text-gray-600 dark:text-gray-400">
+      <p class="text-gray-300 dark:text-white">
         View and manage your polls and forms
       </p>
     </header>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Polls Section -->
-      <app-card>
+      <app-card glow>
         <div
           class="flex flex-col justify-between items-start gap-2 mb-6 border-b border-gray-100 dark:border-gray-700 pb-4 sm:flex-row sm:items-center sm:gap-0"
         >
@@ -44,11 +44,11 @@ const goToCreateForm = () => {
           <app-button
             size="lg"
             @click="goToCreatePoll"
-            class="btn btn-primary px-5 py-2.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-white flex items-center"
+            class="btn btn-primary px-5 py-2.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-white flex items-center group"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4 mr-2"
+              class="h-4 w-4 mr-2 transition-transform duration-200 transform group-hover:scale-110"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -66,7 +66,7 @@ const goToCreateForm = () => {
       </app-card>
 
       <!-- Forms Section -->
-      <AppCard class="card">
+      <AppCard class="card" glow>
         <div
           class="flex flex-col justify-between items-start gap-2 mb-6 border-b border-gray-100 dark:border-gray-700 pb-4 sm:flex-row sm:items-center sm:gap-0"
         >
@@ -81,11 +81,12 @@ const goToCreateForm = () => {
           <app-button
             size="lg"
             @click="goToCreateForm"
-            class="btn btn-primary px-5 py-2.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-white flex items-center"
+            variant="primary"
+            class="group"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4 mr-2"
+              class="h-4 w-4 mr-2 transition-transform duration-300 transform group-hover:scale-110"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -104,3 +105,18 @@ const goToCreateForm = () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.bg-app {
+  background-image: url('/formsandpolls-bg.jpg');
+  padding: 2rem;
+  background-size: cover;
+  background-position: center;
+  border-radius: 0.5rem;
+  filter: brightness(1.5) contrast(1.1);
+}
+
+.dark .bg-app {
+  filter: brightness(1);
+}
+</style>

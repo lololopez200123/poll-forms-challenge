@@ -3,33 +3,33 @@ defineProps({
   type: {
     type: String,
     default: 'text',
-    validator: (value: string) => 
-      ['text', 'email', 'password', 'number', 'tel', 'url'].includes(value)
+    validator: (value: string) =>
+      ['text', 'email', 'password', 'number', 'tel', 'url'].includes(value),
   },
   modelValue: {
     type: [String, Number],
-    default: ''
+    default: '',
   },
   label: {
     type: String,
-    default: ''
+    default: '',
   },
   id: {
     type: String,
-    default: ''
+    default: '',
   },
   placeholder: {
     type: String,
-    default: ''
+    default: '',
   },
   required: {
     type: Boolean,
-    default: false
+    default: false,
   },
   disabled: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -37,13 +37,13 @@ const emit = defineEmits(['update:modelValue']);
 
 <template>
   <div class="w-full">
-    <label 
-      v-if="label" 
-      :for="id" 
-      class="block text-sm font-medium  text-gray-700 dark:text-gray-300 mb-1 "
+    <label
+      v-if="label"
+      :for="id"
+      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
     >
       {{ label }}
-      <span v-if="required" class="text-red-500">*</span>
+      <span v-if="required" class="text-violet-500">*</span>
     </label>
     <input
       :id="id"

@@ -162,7 +162,7 @@ const createPoll = () => {
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition:  transform .5s ease, opacity .5s ease;
+  transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
 .fade-enter-from {
@@ -177,6 +177,6 @@ const createPoll = () => {
 .fade-enter,
 .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
   opacity: 0;
-  transition:  transform .25s ease, opacity .25s ease;
+  transition: transform 0.25s ease, opacity 0.25s ease;
 }
 </style>

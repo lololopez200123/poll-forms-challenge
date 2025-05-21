@@ -2,6 +2,8 @@
 import { computed } from 'vue';
 import { usePollStore } from '../../stores/pollStore';
 import AppShareButton from '../common/AppShareButton.vue';
+import AppProgressCounter from '../common/AppProgressCounter.vue';
+import AppButton from '../common/AppButton.vue';
 
 const location = computed(() => {
   return typeof window !== 'undefined' ? window.location : { origin: '' };
@@ -87,22 +89,19 @@ const formatDate = (date: Date): string => {
         <template v-if="!compact || (compact && poll.options.length <= 2)">
           <ul class="space-y-2">
             <li v-for="option in poll.options" :key="option.id" class="text-sm">
-              <div class="flex justify-between">
-                <span class="dark:text-gray-200">{{ option.text }}</span>
-                <span class="text-gray-500 dark:text-gray-400"
-                  >{{ option.count }} votes</span
-                >
-              </div>
-              <div
-                class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2 mt-1"
+              <app-progress-counter
+                :count="option.count"
+                :total="poll.totalVotes"
               >
-                <div
-                  class="bg-primary dark:bg-primary h-2 rounded-full transition-all duration-300"
-                  :style="`width: ${
-                    poll.totalVotes ? (option.count / poll.totalVotes) * 100 : 0
-                  }%`"
-                ></div>
-              </div>
+                <template #label>
+                  <span class="dark:text-gray-200">{{ option.text }}</span>
+                </template>
+                <template #count>
+                  <span class="text-gray-500 dark:text-gray-400"
+                    >{{ option.count }} votes</span
+                  >
+                </template>
+              </app-progress-counter>
             </li>
           </ul>
         </template>
@@ -114,17 +113,21 @@ const formatDate = (date: Date): string => {
 
         <div class="mt-4">
           <div class="flex space-x-2">
-            <router-link
-              :to="`/polls/${poll.id}?view=results`"
-              class="btn btn-secondary inline-flex items-center text-sm font-medium px-3 py-1.5"
-            >
-              Results
-            </router-link>
             <app-share-button
               :url="`${location.origin}/polls/${poll.id}`"
               title="Share"
               variant="primary"
             />
+            <app-button variant="outline" type="button">
+              <router-link :to="`/polls/${poll.id}?view=results`" class="">
+                Results
+              </router-link>
+            </app-button>
+            <app-button variant="text" type="button">
+              <router-link :to="`/polls/${poll.id}`" class="">
+                Preview
+              </router-link>
+            </app-button>
           </div>
         </div>
       </div>

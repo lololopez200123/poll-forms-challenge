@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary: #7c3aed;
+  --secondary: #10b981;
+  --accent: #f59e0b;
+  --dark: #1f2937;
+  --light: #f9fafb;
+}
+
 input,
 select,
 textarea {

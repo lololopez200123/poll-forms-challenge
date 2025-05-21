@@ -47,7 +47,6 @@ const openShareModal = async () => {
 
 const closeShareModal = () => {
   isModalOpen.value = false;
-  copied.value = false;
 };
 
 const downloadQRCode = () => {

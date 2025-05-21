@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { useFormStore } from '../../stores/formStore';
 import type { Question, QuestionResponse } from '../../types';
+import AppCard from '../common/AppCard.vue';
 
 const props = defineProps<{
   id: string;
@@ -92,7 +93,11 @@ const submitForm = () => {
 </script>
 
 <template>
-  <div v-if="form" class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+  <app-card
+    glow
+    v-if="form"
+    class="bg-white dark:bg-gray-800 shadow rounded-lg p-6"
+  >
     <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-1">
       {{ form.title }}
     </h3>
@@ -115,7 +120,7 @@ const submitForm = () => {
     </div>
 
     <div v-if="success" class="mt-4 flex justify-center">
-      <router-link to="/" class="btn btn-primary"> Back to Home </router-link>
+      <router-link to="/" class="btn btn-primary"> Close </router-link>
     </div>
 
     <div v-if="!success">
@@ -196,14 +201,14 @@ const submitForm = () => {
         <div class="mt-8">
           <button
             type="submit"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-indigo-500 transition-colors duration-200"
+            class="btn btn-primary inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200"
           >
             Submit Form
           </button>
         </div>
       </form>
     </div>
-  </div>
+  </app-card>
 
   <div v-else class="bg-white shadow rounded-lg p-6 text-center">
     <p class="text-gray-500">Form not found</p>
